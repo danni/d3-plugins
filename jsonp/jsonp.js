@@ -1,4 +1,6 @@
 d3.jsonp = function (url, callback) {
+  url = String(url);
+
   function rand() {
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
       c = '', i = -1;
@@ -15,9 +17,15 @@ d3.jsonp = function (url, callback) {
       script.remove();
     };
 
-    return URI(url).addSearch('callback', c);
-  }
+    if (url.indexOf('?') === -1) {
+      url += '?';
+    } else {
+      url += '&';
+    }
 
+    url += 'callback=';
+    url += c;
+  }
 
   var url = create(url),
     script = d3.select('head')
