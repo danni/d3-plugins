@@ -6,20 +6,22 @@ d3.jsonp = function (url, callback) {
     return c;
   }
 
-  function create(url) {
-    var e = url.match(/callback=d3.jsonp.(\w+)/),
-      c = e ? e[1] : rand();
-    d3.jsonp[c] = function(data) {
+  function create() {
+    var c = rand();
+
+    window[c] = function(data) {
       callback(data);
-      delete d3.jsonp[c];
+      delete window[c];
       script.remove();
     };
-    return 'd3.jsonp.' + c;
+
+    return URI(url).addSearch('callback', c);
   }
 
-  var cb = create(url),
+
+  var url = create(url),
     script = d3.select('head')
     .append('script')
     .attr('type', 'text/javascript')
-    .attr('src', url.replace(/(\{|%7B)callback(\}|%7D)/, cb));
+    .attr('src', url);
 };
